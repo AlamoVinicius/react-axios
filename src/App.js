@@ -1,25 +1,48 @@
-import logo from './logo.svg';
+import React, { useEffect, useState } from "react"
+import api from "./services/api"
+
 import './App.css';
 
-function App() {
+export default function App() {
+  const [user, setUser] = useState()
+  const [repos, setRepos] = useState()
+
+  useEffect(() => {
+    api
+      .get("/users/AlamoVinicius")
+      .then((response) => setUser(response.data))
+      .catch((err) => console.error(`ocorreu um erro ${err}`))
+  }, [])
+
+  useEffect(() => {
+    api
+      .get("/users/AlamoVinicius/repos")
+      .then((response) => setRepos(response.data))
+      .catch(err => console.error(`ocorreu um erro ${err}`))
+  }, [])
+  console.log(repos)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div className="App">
+        <h1>Usuário: {user?.login}</h1>
+        <p>Biografia: {user?.bio}</p>
+      </div>
+      <p><strong>Repositórios:</strong></p>
+      <ul>
+        {repos.map(repo => {
+          return (
+            <li key={repo.full_name}>
+              <strong>{repo.full_name}</strong>
+              <p>{repo.description}</p>
+            </li>
+          )
+        })}
+      </ul>
     </div>
-  );
+  )
 }
 
-export default App;
+
+
+
